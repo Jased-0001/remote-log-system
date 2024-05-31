@@ -3,7 +3,7 @@ import socket
 HOST = "0.0.0.0"
 PORT = 65432
 
-versions = ["v1", "v1.1"]
+versions = ["v1", "v1.1", "v2"]
 
 ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -45,4 +45,25 @@ while Running:
             elif data == b"version handshake":
                 conn.sendall(f"{versions}".encode())
                 print(f"{addr[0]}:{addr[1]} - sent version handshake data")
+
+            # v2
+            elif data.decode().split("---")[0] == "send file":
+                data = data.decode().split("---")
+                conn.sendall(b"ok")
+                print(f"{addr[0]}:{addr[1]} - accepted send file - name {data[1]}")
+                try:
+                    with open(data[1], "a+") as f:
+                        data_ = ""
+                        while True:
+                            data_ = data_ + conn.recv(512).decode()
+                            if not data_:
+                                print(data_)
+                                print("done")
+                                conn.sendall(b"ok")
+                                break
+                        f.write(data_)
+                except Exception as e:
+                    conn.sendall(b"not ok")
+                    print(f"! {e} line {e.__traceback__.tb_lineno}")
+
     print(f"{addr[0]}:{addr[1]} - disconnected")

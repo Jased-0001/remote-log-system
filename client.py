@@ -2,7 +2,7 @@ import socket
 import time
 import sys
 
-version = "v1.1"
+version = "v2"
 
 HOST = "127.0.0.1"
 PORT = 65432
@@ -67,6 +67,23 @@ data = sock.recv(1024)
 
 log("hello server test", "verbose", sock)
 log("hello server test", "verbose", sock)
+
+
+log("Sending file", "info", sock)
+
+sock.sendall(b"send file---cool.txt")
+data = sock.recv(1024).decode()
+
+if data == "ok":
+    sock.sendall(b"log file or something\nqwertyuiop[]\\asdfghjkl;'zxcvbnm,./1234567890-=!@#$%^&*()_+`~QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?\nqwertyuiop[]\\asdfghjkl;'zxcvbnm,./1234567890-=!@#$%^&*()_+`~QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?\nqwertyuiop[]\\asdfghjkl;'zxcvbnm,./1234567890-=!@#$%^&*()_+`~QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?")   
+    data = sock.recv(1024).decode()
+    if data == b"ok":
+        log("Server got our file", "info", sock)
+    else:
+        log("Server did not get our file successfully", "warn", sock)
+else:
+    log("Server didn't accept our file.....", "warn", sock)
+
 
 
 sock.close()
