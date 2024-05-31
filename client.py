@@ -51,7 +51,7 @@ sock.sendall(b"version handshake")
 data = eval(sock.recv(1024).decode())
 
 if version in data:
-    log("Successful!", "info")
+    log("Our version is supported with the server", "info")
 
     sock.sendall(b"handshake accepted")
     _ = sock.recv(1024)
