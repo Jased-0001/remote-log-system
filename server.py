@@ -12,6 +12,17 @@ ss.listen()
 
 Running = True
 
+def recvall(sock, n): # https://stackoverflow.com/a/17668009
+    # Helper function to recv n bytes or return None if EOF is hit
+    data = bytearray()
+    while len(data) < n:
+        packet = sock.recv(n - len(data))
+        if not packet:
+            return None
+        data.extend(packet)
+    return data
+
+
 while Running:
     conn, addr = ss.accept()
     with conn:
@@ -50,18 +61,11 @@ while Running:
             elif data.decode().split("---")[0] == "send file":
                 data = data.decode().split("---")
                 conn.sendall(b"ok")
-                print(f"{addr[0]}:{addr[1]} - accepted send file - name {data[1]}")
+                print(f"{addr[0]}:{addr[1]} - accepted send file - name {data[1]} size {data[2]}b")
                 try:
-                    with open(data[1], "a+") as f:
-                        data_ = ""
-                        while True:
-                            data_ = data_ + conn.recv(512).decode()
-                            if not data_:
-                                print(data_)
-                                print("done")
-                                conn.sendall(b"ok")
-                                break
-                        f.write(data_)
+                    with open(data[1], "w") as f:
+                        f.write(recvall(conn, int(data[2])).decode())
+                        conn.sendall(b"ok")
                 except Exception as e:
                     conn.sendall(b"not ok")
                     print(f"! {e} line {e.__traceback__.tb_lineno}")

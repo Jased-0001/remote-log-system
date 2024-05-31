@@ -68,16 +68,17 @@ data = sock.recv(1024)
 log("hello server test", "verbose", sock)
 log("hello server test", "verbose", sock)
 
-
 log("Sending file", "info", sock)
 
-sock.sendall(b"send file---cool.txt")
+_filething = "log file or something\nqwertyuiop[]\\asdfghjkl;'zxcvbnm,./1234567890-=!@#$%^&*()_+`~QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?\nqwertyuiop[]\\asdfghjkl;'zxcvbnm,./1234567890-=!@#$%^&*()_+`~QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?\nqwertyuiop[]\\asdfghjkl;'zxcvbnm,./1234567890-=!@#$%^&*()_+`~QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?"
+
+sock.sendall(f"send file---cool.txt---{len(_filething)}".encode())
 data = sock.recv(1024).decode()
 
 if data == "ok":
-    sock.sendall(b"log file or something\nqwertyuiop[]\\asdfghjkl;'zxcvbnm,./1234567890-=!@#$%^&*()_+`~QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?\nqwertyuiop[]\\asdfghjkl;'zxcvbnm,./1234567890-=!@#$%^&*()_+`~QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?\nqwertyuiop[]\\asdfghjkl;'zxcvbnm,./1234567890-=!@#$%^&*()_+`~QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?")   
+    sock.sendall(_filething.encode())
     data = sock.recv(1024).decode()
-    if data == b"ok":
+    if data == "ok":
         log("Server got our file", "info", sock)
     else:
         log("Server did not get our file successfully", "warn", sock)
